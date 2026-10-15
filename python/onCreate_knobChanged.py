@@ -1,4 +1,9 @@
+# Select the tool in the Node Graph and run this script to update with the changes.
+
 import nuke
+
+# Configures a dynamic autolabel (node name, current version, label), 
+# a credits block with the current version, and default knob visibility.
 
 onCreate_code = """
 
@@ -22,6 +27,9 @@ h_knobs['kronosStrengthReg'].setVisible(False)
 h_knobs['kronosResampleType'].setVisible(False)
 
 """
+
+# Toggles knobs visibility for the selected engine 
+# and updates onCreate callback to save their state.
 
 knobChanged_code = """
 
@@ -55,6 +63,8 @@ if k and k.name() == 'retime_engine':
     n['onCreate'].setValue(f'{start_ops}\\n{integer_slider}\\n{engine_knob_pos}')
 
 """
+
+# Writing the scripts into the callback knobs of the tool.
 
 nuke.selectedNode()['knobChanged'].setValue(knobChanged_code.strip())
 nuke.selectedNode()['onCreate'].setValue(onCreate_code.strip())
