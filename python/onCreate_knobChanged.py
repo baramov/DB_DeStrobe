@@ -1,3 +1,5 @@
+import nuke
+
 onCreate_code = """
 
 n = nuke.thisNode()
