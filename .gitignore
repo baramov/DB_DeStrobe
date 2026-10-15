@@ -1,0 +1,17 @@
+# Python cache
+**/__pycache__/
+*.pyc
+
+# MacOS
+.DS_Store
+
+# Nuke scripts
+*.nk
+*.nk~
+
+# Other docs
+*.pdf
+*.png
+*.md
+*.txt
+*.json
