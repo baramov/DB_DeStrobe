@@ -1,11 +1,11 @@
 def get_tracker_data(tracker_node):
     
-    # Reads translate knob data from Tracker node.
+    # Reads translate knob data from connected Tracker node.
     # Returns translate curve, shoothing range and warning messages
     
     # Check tracker input
     if tracker_node is None:
-        return None, "", "No Tracker connected to Tracker Input."
+        return None, "", "No Tracker node connected to Tracker Input."
     
     node_class = tracker_node.Class()
     if not node_class.startswith('Tracker'):
