@@ -15,6 +15,7 @@ autolabel_string = "nuke.thisNode().name() + ' v' + nuke.thisNode()['version'].v
 n['autolabel'].setValue(autolabel_string)
 n['credits'].setValue(f"<font size=2 color=#C86A4A><b>DB_DeStrobe {tool_version} </b></font><font size=2>by Dmitry Baramov</a></font>")
 
+n['lookup_curve'].clearFlag(0x0000000000000002)
 n['smooth_strength'].setFlag(0x0000000000000002)
 n['smooth_strength'].setRange(1,50)
 n['smooth_strength'].setDefaultValue([10])
@@ -42,7 +43,7 @@ if k and k.name() == 'retime_engine':
 
     start_ops = 'n = nuke.thisNode()\\nh_knobs = n.knobs()'
 
-    integer_slider = "n['smooth_strength'].setFlag(0x0000000000000002)\\nn['smooth_strength'].setRange(1,50)\\nn['smooth_strength'].setDefaultValue([10])"
+    slider_settings = "n['lookup_curve'].clearFlag(0x0000000000000002)\\nn['smooth_strength'].setFlag(0x0000000000000002)\\nn['smooth_strength'].setRange(1,50)\\nn['smooth_strength'].setDefaultValue([10])"
 
     def toggle_engine_knobs(oflow):
         h_knobs['oflowVectorDetailLocal'].setVisible(oflow)
@@ -60,7 +61,7 @@ if k and k.name() == 'retime_engine':
     elif engine == 1:
         engine_knob_pos = toggle_engine_knobs(oflow=False)
 
-    n['onCreate'].setValue(f'{start_ops}\\n{integer_slider}\\n{engine_knob_pos}')
+    n['onCreate'].setValue(f'{start_ops}\\n{slider_settings}\\n{engine_knob_pos}')
 
 """
 

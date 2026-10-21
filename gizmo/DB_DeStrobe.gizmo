@@ -1,7 +1,7 @@
 Group {
  name DB_DeStrobe
- onCreate "n = nuke.thisNode()\nh_knobs = n.knobs()\nn\['smooth_strength'].setFlag(0x0000000000000002)\nn\['smooth_strength'].setRange(1,50)\nn\['smooth_strength'].setDefaultValue(\[10])\nh_knobs\['oflowVectorDetailLocal'].setVisible(True)\nh_knobs\['oflowSmoothnessLocal'].setVisible(True)\nh_knobs\['oflowResampleType'].setVisible(True)\nh_knobs\['kronosVectorDetailReg'].setVisible(False)\nh_knobs\['kronosStrengthReg'].setVisible(False)\nh_knobs\['kronosResampleType'].setVisible(False)"
- knobChanged "n = nuke.thisNode()\nk = nuke.thisKnob()\n\nif k and k.name() == 'retime_engine':\n    engine = int(k.getValue())\n    h_knobs = n.knobs()\n\n    start_ops = 'n = nuke.thisNode()\\nh_knobs = n.knobs()'\n\n    integer_slider = \"n\['smooth_strength'].setFlag(0x0000000000000002)\\nn\['smooth_strength'].setRange(1,50)\\nn\['smooth_strength'].setDefaultValue(\[10])\"\n\n    def toggle_engine_knobs(oflow):\n        h_knobs\['oflowVectorDetailLocal'].setVisible(oflow)\n        h_knobs\['oflowSmoothnessLocal'].setVisible(oflow)\n        h_knobs\['oflowResampleType'].setVisible(oflow)\n        h_knobs\['kronosVectorDetailReg'].setVisible(not oflow)\n        h_knobs\['kronosStrengthReg'].setVisible(not oflow)\n        h_knobs\['kronosResampleType'].setVisible(not oflow)\n\n        return f\"h_knobs\['oflowVectorDetailLocal'].setVisible(\{oflow\})\\nh_knobs\['oflowSmoothnessLocal'].setVisible(\{oflow\})\\nh_knobs\['oflowResampleType'].setVisible(\{oflow\})\\nh_knobs\['kronosVectorDetailReg'].setVisible(\{not oflow\})\\nh_knobs\['kronosStrengthReg'].setVisible(\{not oflow\})\\nh_knobs\['kronosResampleType'].setVisible(\{not oflow\})\".strip()\n\n    if engine == 0:\n        engine_knob_pos = toggle_engine_knobs(oflow=True)\n            \n    elif engine == 1:\n        engine_knob_pos = toggle_engine_knobs(oflow=False)\n\n    n\['onCreate'].setValue(f'\{start_ops\}\\n\{integer_slider\}\\n\{engine_knob_pos\}')"
+ onCreate "n = nuke.thisNode()\nh_knobs = n.knobs()\ntool_version = n\['version'].value()\nautolabel_string = \"nuke.thisNode().name() + ' v' + nuke.thisNode()\['version'].value() + '\\\\n(' + nuke.thisNode()\['retime_engine'].value() + ')' + ('\\\\n' + nuke.thisNode()\['label'].value() if nuke.thisNode()\['label'].value() else '' )\"\n\nn\['autolabel'].setValue(autolabel_string)\nn\['credits'].setValue(f\"<font size=2 color=#C86A4A><b>DB_DeStrobe \{tool_version\} </b></font><font size=2>by Dmitry Baramov</a></font>\")\n\nn\['lookup_curve'].clearFlag(0x0000000000000002)\nn\['smooth_strength'].setFlag(0x0000000000000002)\nn\['smooth_strength'].setRange(1,50)\nn\['smooth_strength'].setDefaultValue(\[10])\n\nh_knobs\['oflowVectorDetailLocal'].setVisible(True)\nh_knobs\['oflowSmoothnessLocal'].setVisible(True)\nh_knobs\['oflowResampleType'].setVisible(True)\nh_knobs\['kronosVectorDetailReg'].setVisible(False)\nh_knobs\['kronosStrengthReg'].setVisible(False)\nh_knobs\['kronosResampleType'].setVisible(False)"
+ knobChanged "n = nuke.thisNode()\nk = nuke.thisKnob()\n\nif k and k.name() == 'retime_engine':\n    engine = int(k.getValue())\n    h_knobs = n.knobs()\n\n    start_ops = 'n = nuke.thisNode()\\nh_knobs = n.knobs()'\n\n    slider_settings = \"n\['lookup_curve'].clearFlag(0x0000000000000002)\\nn\['smooth_strength'].setFlag(0x0000000000000002)\\nn\['smooth_strength'].setRange(1,50)\\nn\['smooth_strength'].setDefaultValue(\[10])\"\n\n    def toggle_engine_knobs(oflow):\n        h_knobs\['oflowVectorDetailLocal'].setVisible(oflow)\n        h_knobs\['oflowSmoothnessLocal'].setVisible(oflow)\n        h_knobs\['oflowResampleType'].setVisible(oflow)\n        h_knobs\['kronosVectorDetailReg'].setVisible(not oflow)\n        h_knobs\['kronosStrengthReg'].setVisible(not oflow)\n        h_knobs\['kronosResampleType'].setVisible(not oflow)\n\n        return f\"h_knobs\['oflowVectorDetailLocal'].setVisible(\{oflow\})\\nh_knobs\['oflowSmoothnessLocal'].setVisible(\{oflow\})\\nh_knobs\['oflowResampleType'].setVisible(\{oflow\})\\nh_knobs\['kronosVectorDetailReg'].setVisible(\{not oflow\})\\nh_knobs\['kronosStrengthReg'].setVisible(\{not oflow\})\\nh_knobs\['kronosResampleType'].setVisible(\{not oflow\})\".strip()\n\n    if engine == 0:\n        engine_knob_pos = toggle_engine_knobs(oflow=True)\n            \n    elif engine == 1:\n        engine_knob_pos = toggle_engine_knobs(oflow=False)\n\n    n\['onCreate'].setValue(f'\{start_ops\}\\n\{slider_settings\}\\n\{engine_knob_pos\}')"
  autolabel "nuke.thisNode().name() + ' v' + nuke.thisNode()\['version'].value() + '\\n(' + nuke.thisNode()\['retime_engine'].value() + ')' + ('\\n' + nuke.thisNode()\['label'].value() if nuke.thisNode()\['label'].value() else '' )"
  tile_color 0x6500e5ff
  addUserKnob {20 destrobe l DeStrobe}
@@ -27,6 +27,7 @@ Group {
  addUserKnob {26 space5 l "" +STARTLINE T " "}
  addUserKnob {12 original_curve +INVISIBLE}
  addUserKnob {12 smoothed_curve +INVISIBLE}
+ addUserKnob {7 lookup_curve +INVISIBLE}
  addUserKnob {1 version +INVISIBLE}
  version 1.0
 }
@@ -41,20 +42,21 @@ Group {
   xpos -106
   ypos -281
  }
-set N3f0f6a00 [stack 0]
+set N5281a000 [stack 0]
  Kronos {
   retimedChannels all
   timing2 Frame
-  timingFrame2 0
+  timingFrame2 {{parent.lookup_curve}}
   motionEstimation Regularized
   name Kronos
   xpos -40
   ypos -238
   disable {{"Switch.which != 1"}}
  }
-push $N3f0f6a00
+push $N5281a000
  OFlow2 {
   timing2 Frame
+  timingFrame2 {{parent.lookup_curve}}
   name OFlow
   xpos -240
   ypos -234
