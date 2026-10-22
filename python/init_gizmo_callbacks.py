@@ -19,6 +19,7 @@ n['lookup_curve'].clearFlag(0x0000000000000002)
 n['smooth_strength'].setFlag(0x0000000000000002)
 n['smooth_strength'].setRange(1,50)
 n['smooth_strength'].setDefaultValue([10])
+n['transition_ratio'].setDefaultValue([0.1])
 
 h_knobs['oflowVectorDetailLocal'].setVisible(True)
 h_knobs['oflowSmoothnessLocal'].setVisible(True)
@@ -43,7 +44,7 @@ if k and k.name() == 'retime_engine':
 
     start_ops = 'n = nuke.thisNode()\\nh_knobs = n.knobs()'
 
-    slider_settings = "n['lookup_curve'].clearFlag(0x0000000000000002)\\nn['smooth_strength'].setFlag(0x0000000000000002)\\nn['smooth_strength'].setRange(1,50)\\nn['smooth_strength'].setDefaultValue([10])"
+    slider_settings = "n['lookup_curve'].clearFlag(0x0000000000000002)\\nn['smooth_strength'].setFlag(0x0000000000000002)\\nn['smooth_strength'].setRange(1,50)\\nn['smooth_strength'].setDefaultValue([10])\\nn['transition_ratio'].setDefaultValue([0.1])"
 
     def toggle_engine_knobs(oflow):
         h_knobs['oflowVectorDetailLocal'].setVisible(oflow)
