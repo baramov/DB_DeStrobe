@@ -8,7 +8,6 @@ Group {
  addUserKnob {26 smotthing l <b>Smoothing</b>}
  addUserKnob {3 smooth_strength l Strength R 1 50}
  addUserKnob {7 transition_ratio l "Transition Ratio" R 0.01 0.5}
- transition_ratio 0.1
  addUserKnob {26 space1 l "" +STARTLINE T " "}
  addUserKnob {22 calculate l <b>CALCULATE</b> +STARTLINE}
  addUserKnob {26 space2 l "" +STARTLINE T " "}
@@ -30,6 +29,7 @@ Group {
  addUserKnob {12 original_curve +INVISIBLE}
  addUserKnob {12 smoothed_curve +INVISIBLE}
  addUserKnob {7 lookup_curve +INVISIBLE}
+ lookup_curve {{frame}}
  addUserKnob {1 version +INVISIBLE}
  version 1.0
 }
