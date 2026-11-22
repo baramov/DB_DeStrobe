@@ -2,11 +2,10 @@ import nuke
 import math
 import contextlib
 
-
 STRENGTH_RANGE = (1, 50)
 TRANSITION_RANGE = (0.01, 0.50)
+TEMPORAL_RANGE = (0.1, 10.0)
 TRANSITION_ZONE_MIN = 2
-TEMPORAL_K = 1.5
 MOTION_EPS = 1e-6
 SHORT_TRACK_WARN = 10
 RETIMER_CLASSES = ('Kronos', 'OFlow2')
@@ -17,6 +16,7 @@ K_SMOOTH = 'smoothed_curve'
 K_INFO = 'info_text'
 K_STRENGTH = 'smooth_strength'
 K_TRANS = 'transition_ratio'
+K_TEMPORAL = 'temporal_weight'
 
 K_TRACK_TRANSLATE = 'translate'
 
@@ -26,7 +26,8 @@ K_RETIME_LAST = 'input.last'
 K_RETIME_FRAME = 'timingFrame2'
 V_TIMING_FRAME = 'Frame'
 
-REQUIRED_KNOBS = (K_LOOKUP, K_ORIG, K_SMOOTH, K_INFO, K_STRENGTH, K_TRANS)
+REQUIRED_KNOBS = (K_LOOKUP, K_ORIG, K_SMOOTH, K_INFO,
+                  K_STRENGTH, K_TRANS, K_TEMPORAL)
 
 
 def _clamp(value, lo, hi):
@@ -62,6 +63,16 @@ def _join_warnings(messages):
     return "<br>".join([m for m in messages if m])
 
 
+def _force_linear(knob, indices=None):
+    targets = indices if indices is not None else (0,)
+    for index in targets:
+        curve = knob.animation(index)
+        if curve is None:
+            continue
+        for key in curve.keys():
+            key.interpolation = nuke.LINEAR
+
+
 @contextlib.contextmanager
 def _curve_write(knob, first, last, indices=None):
     targets = (None,) if indices is None else indices
@@ -82,6 +93,8 @@ def _curve_write(knob, first, last, indices=None):
                 knob.setAnimated(index)
 
         yield
+
+        _force_linear(knob, indices)
 
         if stray and can_remove:
             for index in targets:
@@ -126,27 +139,27 @@ def _format_info(input_range_info, smooth_range_info, warning_msg):
 def get_sequence_range(gizmo):
     source = gizmo.input(0)
     if source is None:
-        return None, None, "No image connected to input 0."
+        return None, None, "No image connected to IMAGE input."
 
     try:
         first = int(source.firstFrame())
         last = int(source.lastFrame())
     except Exception as exc:
-        return None, None, "Cannot read frame range from input 0: %s" % exc
+        return None, None, "Cannot read frame range from IMAGE input: %s" % exc
 
     if first > last:
-        return None, None, "Input 0 frame range is empty."
+        return None, None, "IMAGE input frame range is empty."
 
     return first, last, None
 
 
 def get_tracker_data(tracker_node):
     if tracker_node is None:
-        return None, "", "No tracker connected to input 1."
+        return None, "", "No tracker connected to TRACKER input."
 
     node_class = tracker_node.Class()
     if not node_class.startswith('Tracker'):
-        return None, "", "Input 1 must be a Tracker node, got %s." % node_class
+        return None, "", "TRACKER input must be a Tracker node, got %s." % node_class
 
     if K_TRACK_TRANSLATE not in tracker_node.knobs():
         return None, "", "Tracker node missing '%s' knob." % K_TRACK_TRANSLATE
@@ -283,7 +296,7 @@ def smooth_curve(original_curve_data, strength, transition_ratio):
     return smoothed_curve_data
 
 
-def lookup_curve(original_curve_data, smoothed_curve_data):
+def lookup_curve(original_curve_data, smoothed_curve_data, temporal_weight):
     if not original_curve_data or not smoothed_curve_data:
         return []
 
@@ -291,7 +304,7 @@ def lookup_curve(original_curve_data, smoothed_curve_data):
     if scale <= MOTION_EPS:
         return [(frame, float(frame)) for _, _, frame in smoothed_curve_data]
 
-    temporal_weight = TEMPORAL_K * scale
+    weight_per_frame = _clamp(temporal_weight, *TEMPORAL_RANGE) * scale
     original_count = len(original_curve_data)
 
     lookup_data = []
@@ -314,12 +327,12 @@ def lookup_curve(original_curve_data, smoothed_curve_data):
             orig_x, orig_y, orig_frame = original_curve_data[idx]
 
             if orig_frame > target_frame:
-                if (orig_frame - target_frame) * temporal_weight >= best_score:
+                if (orig_frame - target_frame) * weight_per_frame >= best_score:
                     break
 
             spatial_dist = math.hypot(orig_x - target_x, orig_y - target_y)
             score = spatial_dist + \
-                abs(orig_frame - target_frame) * temporal_weight
+                abs(orig_frame - target_frame) * weight_per_frame
 
             if score < best_score:
                 best_score = score
@@ -335,8 +348,8 @@ def lookup_curve(original_curve_data, smoothed_curve_data):
             next_dist = math.hypot(next_x - target_x, next_y - target_y)
             total = best_dist + next_dist
             if total > 0.0:
-                weight = best_dist / total
-                source_frame = best_frame + weight * (next_frame - best_frame)
+                blend = best_dist / total
+                source_frame = best_frame + blend * (next_frame - best_frame)
 
         lookup_data.append((target_frame, source_frame))
         prev_source_frame = source_frame
@@ -429,10 +442,12 @@ def calculate():
 
     strength = gizmo[K_STRENGTH].value()
     transition_ratio = gizmo[K_TRANS].value()
+    temporal_weight = gizmo[K_TEMPORAL].value()
 
     smoothed_curve_data = smooth_curve(
         original_curve_data, strength, transition_ratio)
-    raw_lookup = lookup_curve(original_curve_data, smoothed_curve_data)
+    raw_lookup = lookup_curve(
+        original_curve_data, smoothed_curve_data, temporal_weight)
     lookup_data, extend_warning = extend_lookup(
         raw_lookup, seq_first, seq_last)
 
