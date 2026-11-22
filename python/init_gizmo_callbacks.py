@@ -2,7 +2,7 @@
 
 import nuke
 
-# Configures a dynamic autolabel (node name, current version, label), 
+# Configures a dynamic autolabel (node name, current version, label),
 # a credits block with the current version, and default knob visibility.
 
 onCreate_code = """
@@ -15,6 +15,10 @@ autolabel_string = "nuke.thisNode().name() + ' v' + nuke.thisNode()['version'].v
 n['autolabel'].setValue(autolabel_string)
 n['credits'].setValue(f"<font size=2 color=#C86A4A><b>DB_DeStrobe {tool_version} </b></font><font size=2>by Dmitry Baramov</a></font>")
 
+n['original_curve'].setFlag(0x0000000000000080)
+n['smoothed_curve'].setFlag(0x0000000000000080)
+n['temporal_weight'].setRange(0.1,10)
+n['temporal_weight'].setDefaultValue([2.5])
 n['lookup_curve'].clearFlag(0x0000000000000002)
 n['smooth_strength'].setFlag(0x0000000000000002)
 n['smooth_strength'].setRange(1,50)
@@ -30,7 +34,7 @@ h_knobs['kronosResampleType'].setVisible(False)
 
 """
 
-# Toggles knobs visibility for the selected engine 
+# Toggles knobs visibility for the selected engine
 # and updates onCreate callback to save their state.
 
 knobChanged_code = """
