@@ -1,91 +1,98 @@
 Group {
- name DB_DeStrobe
- onCreate "n = nuke.thisNode()\nh_knobs = n.knobs()\ntool_version = n\['version'].value()\nautolabel_string = \"nuke.thisNode().name() + ' v' + nuke.thisNode()\['version'].value() + '\\\\n(' + nuke.thisNode()\['retime_engine'].value() + ')' + ('\\\\n' + nuke.thisNode()\['label'].value() if nuke.thisNode()\['label'].value() else '' )\"\n\nn\['autolabel'].setValue(autolabel_string)\nn\['credits'].setValue(f\"<font size=2 color=#C86A4A><b>DB_DeStrobe \{tool_version\} </b></font><font size=2>by Dmitry Baramov</a></font>\")\n\nn\['lookup_curve'].clearFlag(0x0000000000000002)\nn\['smooth_strength'].setFlag(0x0000000000000002)\nn\['smooth_strength'].setRange(1,50)\nn\['smooth_strength'].setDefaultValue(\[10])\nn\['transition_ratio'].setDefaultValue(\[0.1])\n\nh_knobs\['oflowVectorDetailLocal'].setVisible(True)\nh_knobs\['oflowSmoothnessLocal'].setVisible(True)\nh_knobs\['oflowResampleType'].setVisible(True)\nh_knobs\['kronosVectorDetailReg'].setVisible(False)\nh_knobs\['kronosStrengthReg'].setVisible(False)\nh_knobs\['kronosResampleType'].setVisible(False)"
- knobChanged "n = nuke.thisNode()\nk = nuke.thisKnob()\n\nif k and k.name() == 'retime_engine':\n    engine = int(k.getValue())\n    h_knobs = n.knobs()\n\n    start_ops = 'n = nuke.thisNode()\\nh_knobs = n.knobs()'\n\n    slider_settings = \"n\['lookup_curve'].clearFlag(0x0000000000000002)\\nn\['smooth_strength'].setFlag(0x0000000000000002)\\nn\['smooth_strength'].setRange(1,50)\\nn\['smooth_strength'].setDefaultValue(\[10])\\nn\['transition_ratio'].setDefaultValue(\[0.1])\"\n\n    def toggle_engine_knobs(oflow):\n        h_knobs\['oflowVectorDetailLocal'].setVisible(oflow)\n        h_knobs\['oflowSmoothnessLocal'].setVisible(oflow)\n        h_knobs\['oflowResampleType'].setVisible(oflow)\n        h_knobs\['kronosVectorDetailReg'].setVisible(not oflow)\n        h_knobs\['kronosStrengthReg'].setVisible(not oflow)\n        h_knobs\['kronosResampleType'].setVisible(not oflow)\n\n        return f\"h_knobs\['oflowVectorDetailLocal'].setVisible(\{oflow\})\\nh_knobs\['oflowSmoothnessLocal'].setVisible(\{oflow\})\\nh_knobs\['oflowResampleType'].setVisible(\{oflow\})\\nh_knobs\['kronosVectorDetailReg'].setVisible(\{not oflow\})\\nh_knobs\['kronosStrengthReg'].setVisible(\{not oflow\})\\nh_knobs\['kronosResampleType'].setVisible(\{not oflow\})\".strip()\n\n    if engine == 0:\n        engine_knob_pos = toggle_engine_knobs(oflow=True)\n            \n    elif engine == 1:\n        engine_knob_pos = toggle_engine_knobs(oflow=False)\n\n    n\['onCreate'].setValue(f'\{start_ops\}\\n\{slider_settings\}\\n\{engine_knob_pos\}')"
- autolabel "nuke.thisNode().name() + ' v' + nuke.thisNode()\['version'].value() + '\\n(' + nuke.thisNode()\['retime_engine'].value() + ')' + ('\\n' + nuke.thisNode()\['label'].value() if nuke.thisNode()\['label'].value() else '' )"
- tile_color 0x6500e5ff
- addUserKnob {20 destrobe l DeStrobe}
- addUserKnob {26 smotthing l <b>Smoothing</b>}
- addUserKnob {3 smooth_strength l Strength R 1 50}
- addUserKnob {7 transition_ratio l "Transition Ratio" R 0.01 0.5}
- addUserKnob {26 space1 l "" +STARTLINE T " "}
- addUserKnob {22 calculate l <b>CALCULATE</b> +STARTLINE}
- addUserKnob {26 space2 l "" +STARTLINE T " "}
- addUserKnob {26 retime l <b>Retime</b>}
- addUserKnob {4 retime_engine l Engine M {OFlow Kronos "" "" ""}}
- addUserKnob {41 oflowVectorDetailLocal l "Vector Detail" T OFlow.vectorDetailLocal}
- addUserKnob {41 kronosVectorDetailReg l "Vector Detail" +HIDDEN T Kronos.vectorDetailReg}
- addUserKnob {41 oflowSmoothnessLocal l Smoothness T OFlow.smoothnessLocal}
- addUserKnob {41 kronosStrengthReg l Strength +HIDDEN T Kronos.strengthReg}
- addUserKnob {41 oflowResampleType l Filter T OFlow.resampleType}
- addUserKnob {41 kronosResampleType l Filter +HIDDEN T Kronos.resampleType}
- addUserKnob {26 space3 l "" +STARTLINE T " "}
- addUserKnob {26 info l <b>Info</b>}
- addUserKnob {26 info_text l " " T "<font size=3>Input Range: </font><br>\n<font size=3>Smooth Range: </font><br><br>\n<font size=3 color=yellow><b>WARNING: </b></font>"}
- addUserKnob {26 space4 l "" +STARTLINE T " "}
- addUserKnob {26 ""}
- addUserKnob {26 credits l "" +STARTLINE T "<font size=2 color=#C86A4A><b>DB_DeStrobe 1.0 </b></font><font size=2>by Dmitry Baramov</a></font>"}
- addUserKnob {26 space5 l "" +STARTLINE T " "}
- addUserKnob {12 original_curve +INVISIBLE}
- addUserKnob {12 smoothed_curve +INVISIBLE}
- addUserKnob {7 lookup_curve +INVISIBLE}
- lookup_curve {{frame}}
- addUserKnob {1 version +INVISIBLE}
- version 1.0
+    name DB_DeStrobe
+    onCreate "n = nuke.thisNode()\nh_knobs = n.knobs()\ntool_version = n\['version'].value()\nautolabel_string = \"nuke.thisNode().name() + ' v' + nuke.thisNode()\['version'].value() + '\\\\n(' + nuke.thisNode()\['retime_engine'].value() + ')' + ('\\\\n' + nuke.thisNode()\['label'].value() if nuke.thisNode()\['label'].value() else '' )\"\n\nn\['autolabel'].setValue(autolabel_string)\nn\['credits'].setValue(f\"<font size=2 color=#C86A4A><b>DB_DeStrobe \{tool_version\} </b></font><font size=2>by Dmitry Baramov</a></font>\")\n\nn\['original_curve'].setFlag(0x0000000000000080)\nn\['smoothed_curve'].setFlag(0x0000000000000080)\nn\['temporal_weight'].setRange(0.1,10)\nn\['temporal_weight'].setDefaultValue(\[2.5])\nn\['lookup_curve'].clearFlag(0x0000000000000002)\nn\['smooth_strength'].setFlag(0x0000000000000002)\nn\['smooth_strength'].setRange(1,50)\nn\['smooth_strength'].setDefaultValue(\[10])\nn\['transition_ratio'].setDefaultValue(\[0.1])\n\nh_knobs\['oflowVectorDetailLocal'].setVisible(True)\nh_knobs\['oflowSmoothnessLocal'].setVisible(True)\nh_knobs\['oflowResampleType'].setVisible(True)\nh_knobs\['kronosVectorDetailReg'].setVisible(False)\nh_knobs\['kronosStrengthReg'].setVisible(False)\nh_knobs\['kronosResampleType'].setVisible(False)"
+    knobChanged "n = nuke.thisNode()\nk = nuke.thisKnob()\n\nif k and k.name() == 'retime_engine':\n    engine = int(k.getValue())\n    h_knobs = n.knobs()\n\n    start_ops = 'n = nuke.thisNode()\\nh_knobs = n.knobs()'\n\n    slider_settings = \"n\['lookup_curve'].clearFlag(0x0000000000000002)\\nn\['smooth_strength'].setFlag(0x0000000000000002)\\nn\['smooth_strength'].setRange(1,50)\\nn\['smooth_strength'].setDefaultValue(\[10])\\nn\['transition_ratio'].setDefaultValue(\[0.1])\"\n\n    def toggle_engine_knobs(oflow):\n        h_knobs\['oflowVectorDetailLocal'].setVisible(oflow)\n        h_knobs\['oflowSmoothnessLocal'].setVisible(oflow)\n        h_knobs\['oflowResampleType'].setVisible(oflow)\n        h_knobs\['kronosVectorDetailReg'].setVisible(not oflow)\n        h_knobs\['kronosStrengthReg'].setVisible(not oflow)\n        h_knobs\['kronosResampleType'].setVisible(not oflow)\n\n        return f\"h_knobs\['oflowVectorDetailLocal'].setVisible(\{oflow\})\\nh_knobs\['oflowSmoothnessLocal'].setVisible(\{oflow\})\\nh_knobs\['oflowResampleType'].setVisible(\{oflow\})\\nh_knobs\['kronosVectorDetailReg'].setVisible(\{not oflow\})\\nh_knobs\['kronosStrengthReg'].setVisible(\{not oflow\})\\nh_knobs\['kronosResampleType'].setVisible(\{not oflow\})\".strip()\n\n    if engine == 0:\n        engine_knob_pos = toggle_engine_knobs(oflow=True)\n            \n    elif engine == 1:\n        engine_knob_pos = toggle_engine_knobs(oflow=False)\n\n    n\['onCreate'].setValue(f'\{start_ops\}\\n\{slider_settings\}\\n\{engine_knob_pos\}')"
+    autolabel "nuke.thisNode().name() + ' v' + nuke.thisNode()\['version'].value() + '\\n(' + nuke.thisNode()\['retime_engine'].value() + ')' + ('\\n' + nuke.thisNode()\['label'].value() if nuke.thisNode()\['label'].value() else '' )"
+    tile_color 0x6500e5ff
+    selected true
+    xpos -740
+    ypos -343
+    addUserKnob {20 destrobe l DeStrobe}
+    addUserKnob {26 smotthing l <b>Smoothing</b>}
+    addUserKnob {3 smooth_strength l Strength t "Smoothing window size in frames at full strength. Controls how aggressively high-frequency tracker jitter is removed from the motion curve. Higher values give a smoother path but pull the curve further away from fast genuine movement, which reduces the amount of retiming available. The first and last frames of the track are always left untouched regardless of this value. Range 1-50, default 10." R 1 50}
+    addUserKnob {7 temporal_weight l "Temporal Weight" t "Cost of shifting playback by one frame, measured in median per-frame displacements of the track. Balances position accuracy against timing stability when the smoothed curve is matched back to real frames. Low values follow the smoothed position aggressively and can produce holds or stutter on oscillating motion; high values stay close to the original timing and correct mostly at sub-frame level. Recommended 2-5 for erratic or back-and-forth motion. Range 0.1-10, default 2.5." R 0.1 10}
+    addUserKnob {7 transition_ratio l "Transition Ratio" t "Fraction of the track length used as an edge blend zone. Smoothing fades out over this portion at the start and end of the track so the retimed section joins the untouched footage without a visible seam. Higher values give a longer, softer blend; lower values keep more of the track at full smoothing strength but make the seam more abrupt. The zone is clamped to a minimum of 2 frames. Range 0.01-0.50, default 0.1." R 0.01 0.5}
+    addUserKnob {26 space1 l "" +STARTLINE T " "}
+    addUserKnob {22 calculate l <b>CALCULATE</b> t "Run calculation" T "import nuke\nimport math\nimport contextlib\n\n\nSTRENGTH_RANGE = (1, 50)\nTRANSITION_RANGE = (0.01, 0.50)\nTEMPORAL_RANGE = (0.1, 10.0)\nTRANSITION_ZONE_MIN = 2\nMOTION_EPS = 1e-6\nSHORT_TRACK_WARN = 10\nRETIMER_CLASSES = ('Kronos', 'OFlow2')\n\n\nK_LOOKUP = 'lookup_curve'\nK_ORIG = 'original_curve'\nK_SMOOTH = 'smoothed_curve'\nK_INFO = 'info_text'\nK_STRENGTH = 'smooth_strength'\nK_TRANS = 'transition_ratio'\nK_TEMPORAL = 'temporal_weight'\n\n\nK_TRACK_TRANSLATE = 'translate'\n\n\nK_RETIME_TIMING = 'timing2'\nK_RETIME_FIRST = 'input.first'\nK_RETIME_LAST = 'input.last'\nK_RETIME_FRAME = 'timingFrame2'\nV_TIMING_FRAME = 'Frame'\n\n\nREQUIRED_KNOBS = (K_LOOKUP, K_ORIG, K_SMOOTH, K_INFO,\n                  K_STRENGTH, K_TRANS, K_TEMPORAL)\n\n\n\ndef _clamp(value, lo, hi):\n    return max(lo, min(hi, value))\n\n\n\ndef _median(values):\n    ordered = sorted(values)\n    n = len(ordered)\n    if n == 0:\n        return 0.0\n    mid = n // 2\n    if n % 2:\n        return ordered\[mid]\n    return 0.5 * (ordered\[mid - 1] + ordered\[mid])\n\n\n\ndef _motion_scale(original_curve_data):\n    steps = \[]\n    for i in range(1, len(original_curve_data)):\n        px, py, _ = original_curve_data\[i - 1]\n        cx, cy, _ = original_curve_data\[i]\n        steps.append(math.hypot(cx - px, cy - py))\n    return _median(steps)\n\n\n\ndef _missing_knobs(gizmo):\n    available = gizmo.knobs()\n    return \[name for name in REQUIRED_KNOBS if name not in available]\n\n\n\ndef _join_warnings(messages):\n    return \"<br>\".join(\[m for m in messages if m])\n\n\n\ndef _force_linear(knob, indices=None):\n    targets = indices if indices is not None else (0,)\n    for index in targets:\n        curve = knob.animation(index)\n        if curve is None:\n            continue\n        for key in curve.keys():\n            key.interpolation = nuke.LINEAR\n\n\n\n@contextlib.contextmanager\ndef _curve_write(knob, first, last, indices=None):\n    targets = (None,) if indices is None else indices\n    current = nuke.frame()\n    stray = not (first <= current <= last)\n    can_remove = hasattr(knob, 'removeKeyAt')\n    parked = stray and not can_remove\n\n\n    if parked:\n        nuke.frame(first)\n    try:\n        for index in targets:\n            if index is None:\n                knob.clearAnimated()\n                knob.setAnimated()\n            else:\n                knob.clearAnimated(index)\n                knob.setAnimated(index)\n\n\n        yield\n\n\n        _force_linear(knob, indices)\n\n\n        if stray and can_remove:\n            for index in targets:\n                if index is None:\n                    knob.removeKeyAt(current)\n                else:\n                    knob.removeKeyAt(current, index)\n    finally:\n        if parked:\n            nuke.frame(current)\n\n\n\ndef _write_scalar_curve(knob, pairs, first, last):\n    with _curve_write(knob, first, last):\n        for frame, value in pairs:\n            knob.setValueAt(value, frame)\n\n\n\ndef _write_xy_curve(knob, triples, first, last):\n    with _curve_write(knob, first, last, indices=(0, 1)):\n        for x, y, frame in triples:\n            knob.setValueAt(x, frame, 0)\n            knob.setValueAt(y, frame, 1)\n\n\n\ndef _iter_retimers(gizmo):\n    for node in gizmo.nodes():\n        if node.Class() in RETIMER_CLASSES:\n            yield node\n\n\n\ndef _format_info(input_range_info, smooth_range_info, warning_msg):\n    html = (\"<font size=3>Input Range: %s</font><br>\"\n            \"<font size=3>Smooth Range: %s</font>\"\n            % (input_range_info, smooth_range_info))\n    if warning_msg:\n        html += (\"<br><br><font size=3 color=yellow><b>WARNING: %s</b></font>\"\n                 % warning_msg)\n    return html\n\n\n\ndef get_sequence_range(gizmo):\n    source = gizmo.input(0)\n    if source is None:\n        return None, None, \"No image connected to IMAGE input.\"\n\n\n    try:\n        first = int(source.firstFrame())\n        last = int(source.lastFrame())\n    except Exception as exc:\n        return None, None, \"Cannot read frame range from IMAGE input: %s\" % exc\n\n\n    if first > last:\n        return None, None, \"IMAGE input frame range is empty.\"\n\n\n    return first, last, None\n\n\n\ndef get_tracker_data(tracker_node):\n    if tracker_node is None:\n        return None, \"\", \"No tracker connected to TRACKER input.\"\n\n\n    node_class = tracker_node.Class()\n    if not node_class.startswith('Tracker'):\n        return None, \"\", \"TRACKER input must be a Tracker node, got %s.\" % node_class\n\n\n    if K_TRACK_TRANSLATE not in tracker_node.knobs():\n        return None, \"\", \"Tracker node missing '%s' knob.\" % K_TRACK_TRANSLATE\n\n\n    translate_knob = tracker_node\[K_TRACK_TRANSLATE]\n    if translate_knob.arraySize() != 2:\n        return None, \"\", \"Tracker '%s' must have 2 fields.\" % K_TRACK_TRANSLATE\n\n\n    first_frames = \[]\n    last_frames = \[]\n    for index in (0, 1):\n        curve = translate_knob.animation(index)\n        if curve is None:\n            continue\n        keys = curve.keys()\n        if not keys:\n            continue\n        times = \[k.x for k in keys]\n        first_frames.append(min(times))\n        last_frames.append(max(times))\n\n\n    if not first_frames:\n        return None, \"\", (\"Tracker '%s' has no animation keys \"\n                          \"(expression or link driven?).\" % K_TRACK_TRANSLATE)\n\n\n    first_frame = int(math.ceil(max(first_frames)))\n    last_frame = int(math.floor(min(last_frames)))\n\n\n    if first_frame > last_frame:\n        return None, \"\", \"Tracker X and Y ranges do not overlap. Cannot smooth.\"\n\n\n    warning_msgs = \[]\n    track_length = last_frame - first_frame + 1\n\n\n    if track_length < SHORT_TRACK_WARN:\n        warning_msgs.append(\n            \"Track is very short (%d frames). Smoothing may be ineffective.\"\n            % track_length)\n\n\n    if min(first_frames) != max(first_frames) or max(last_frames) != min(last_frames):\n        warning_msgs.append(\n            \"Tracker X and Y ranges differ. Using intersection.\")\n\n\n    if len(first_frames) < 2:\n        warning_msgs.append(\n            \"Only one axis is animated. Other axis is constant.\")\n\n\n    original_curve_data = \[]\n    for frame in range(first_frame, last_frame + 1):\n        value = translate_knob.valueAt(frame)\n        original_curve_data.append((value\[0], value\[1], frame))\n\n\n    smooth_range_info = \"%d-%d\" % (first_frame, last_frame)\n    return original_curve_data, smooth_range_info, _join_warnings(warning_msgs)\n\n\n\ndef check_retimers(gizmo):\n    problems = \[]\n    retimers = list(_iter_retimers(gizmo))\n\n\n    if not retimers:\n        return \[\"No Kronos or OFlow2 node found inside the gizmo.\"]\n\n\n    for node in retimers:\n        knobs = node.knobs()\n        label = \"%s (%s)\" % (node.name(), node.Class())\n\n\n        for name in (K_RETIME_TIMING, K_RETIME_FIRST, K_RETIME_LAST):\n            if name not in knobs:\n                problems.append(\"%s: knob '%s' not found.\" % (label, name))\n\n\n        if K_RETIME_FRAME not in knobs:\n            problems.append(\"%s: knob '%s' not found.\" %\n                            (label, K_RETIME_FRAME))\n            continue\n\n\n        script = node\[K_RETIME_FRAME].toScript()\n        if K_LOOKUP not in script:\n            problems.append(\n                \"%s: '%s' is not linked to parent.%s. Retime will have no effect.\"\n                % (label, K_RETIME_FRAME, K_LOOKUP))\n\n\n    return problems\n\n\n\ndef smooth_curve(original_curve_data, strength, transition_ratio):\n    count = len(original_curve_data)\n    if count == 0:\n        return \[]\n\n\n    strength = int(_clamp(strength, *STRENGTH_RANGE))\n    ratio = _clamp(transition_ratio, *TRANSITION_RANGE)\n    transition_zone = max(TRANSITION_ZONE_MIN, int(count * ratio))\n\n\n    kernel_cache = \{\}\n    smoothed_curve_data = \[]\n\n\n    for i in range(count):\n        x, y, frame = original_curve_data\[i]\n\n\n        edge_distance = min(i, count - 1 - i)\n        falloff = min(1.0, edge_distance / float(transition_zone))\n\n\n        if falloff == 0.0:\n            smoothed_curve_data.append((x, y, frame))\n            continue\n\n\n        kernel = kernel_cache.get(falloff)\n        if kernel is None:\n            window = int(strength * falloff)\n            sigma = (strength / 3.0) * falloff\n            inv_two_sigma_sq = 1.0 / (2.0 * sigma * sigma)\n            weights = \[math.exp(-(d * d) * inv_two_sigma_sq)\n                       for d in range(window + 1)]\n            kernel = (window, weights)\n            kernel_cache\[falloff] = kernel\n\n\n        window, weights = kernel\n        start = max(0, i - window)\n        end = min(count, i + window + 1)\n\n\n        weighted_x = 0.0\n        weighted_y = 0.0\n        weight_sum = 0.0\n        for j in range(start, end):\n            weight = weights\[abs(i - j)]\n            weighted_x += original_curve_data\[j]\[0] * weight\n            weighted_y += original_curve_data\[j]\[1] * weight\n            weight_sum += weight\n\n\n        smoothed_curve_data.append(\n            (weighted_x / weight_sum, weighted_y / weight_sum, frame))\n\n\n    return smoothed_curve_data\n\n\n\ndef lookup_curve(original_curve_data, smoothed_curve_data, temporal_weight):\n    if not original_curve_data or not smoothed_curve_data:\n        return \[]\n\n\n    scale = _motion_scale(original_curve_data)\n    if scale <= MOTION_EPS:\n        return \[(frame, float(frame)) for _, _, frame in smoothed_curve_data]\n\n\n    weight_per_frame = _clamp(temporal_weight, *TEMPORAL_RANGE) * scale\n    original_count = len(original_curve_data)\n\n\n    lookup_data = \[]\n    prev_source_frame = float(original_curve_data\[0]\[2])\n    start_index = 0\n\n\n    for target_x, target_y, target_frame in smoothed_curve_data:\n        while (start_index < original_count\n               and original_curve_data\[start_index]\[2] < prev_source_frame):\n            start_index += 1\n\n\n        if start_index >= original_count:\n            start_index = original_count - 1\n\n\n        best_score = math.inf\n        best_index = start_index\n        best_dist = 0.0\n\n\n        for idx in range(start_index, original_count):\n            orig_x, orig_y, orig_frame = original_curve_data\[idx]\n\n\n            if orig_frame > target_frame:\n                if (orig_frame - target_frame) * weight_per_frame >= best_score:\n                    break\n\n\n            spatial_dist = math.hypot(orig_x - target_x, orig_y - target_y)\n            score = spatial_dist + \\\n                abs(orig_frame - target_frame) * weight_per_frame\n\n\n            if score < best_score:\n                best_score = score\n                best_index = idx\n                best_dist = spatial_dist\n\n\n        best_x, best_y, best_frame = original_curve_data\[best_index]\n        source_frame = float(best_frame)\n\n\n        next_index = best_index + 1\n        if next_index < original_count:\n            next_x, next_y, next_frame = original_curve_data\[next_index]\n            next_dist = math.hypot(next_x - target_x, next_y - target_y)\n            total = best_dist + next_dist\n            if total > 0.0:\n                blend = best_dist / total\n                source_frame = best_frame + blend * (next_frame - best_frame)\n\n\n        lookup_data.append((target_frame, source_frame))\n        prev_source_frame = source_frame\n        start_index = best_index\n\n\n    return lookup_data\n\n\n\ndef extend_lookup(lookup_data, seq_first, seq_last):\n    if not lookup_data:\n        return (\[(f, float(f)) for f in range(seq_first, seq_last + 1)],\n                \"No tracker data. Identity retime.\")\n\n\n    track_first = lookup_data\[0]\[0]\n    track_last = lookup_data\[-1]\[0]\n\n\n    if track_last < seq_first or track_first > seq_last:\n        return (\[(f, float(f)) for f in range(seq_first, seq_last + 1)],\n                \"Tracker range does not intersect sequence range. Identity retime.\")\n\n\n    warning = None\n    if track_first < seq_first or track_last > seq_last:\n        warning = \"Tracker range exceeds sequence range. Lookup clipped.\"\n\n\n    full = \[]\n    for frame in range(seq_first, min(track_first, seq_last + 1)):\n        full.append((frame, float(frame)))\n\n\n    for frame, source in lookup_data:\n        if seq_first <= frame <= seq_last:\n            full.append((frame, source))\n\n\n    for frame in range(max(track_last + 1, seq_first), seq_last + 1):\n        full.append((frame, float(frame)))\n\n\n    return full, warning\n\n\n\ndef write_results(gizmo, lookup_data, original_curve_data,\n                  smoothed_curve_data, seq_first, seq_last,\n                  input_range_info, smooth_range_info, warning_msg):\n    _write_scalar_curve(gizmo\[K_LOOKUP], lookup_data, seq_first, seq_last)\n\n\n    if original_curve_data:\n        track_first = original_curve_data\[0]\[2]\n        track_last = original_curve_data\[-1]\[2]\n        _write_xy_curve(gizmo\[K_ORIG], original_curve_data,\n                        track_first, track_last)\n        _write_xy_curve(gizmo\[K_SMOOTH],\n                        smoothed_curve_data, track_first, track_last)\n\n\n    for node in _iter_retimers(gizmo):\n        knobs = node.knobs()\n\n\n        if K_RETIME_TIMING in knobs:\n            node\[K_RETIME_TIMING].setValue(V_TIMING_FRAME)\n\n\n        for name, value in ((K_RETIME_FIRST, seq_first),\n                            (K_RETIME_LAST, seq_last)):\n            if name in knobs:\n                node\[name].clearAnimated()\n                node\[name].setValue(value)\n\n\n    gizmo\[K_INFO].setValue(\n        _format_info(input_range_info, smooth_range_info, warning_msg))\n\n\n\ndef calculate():\n    gizmo = nuke.thisNode()\n\n\n    missing = _missing_knobs(gizmo)\n    if missing:\n        nuke.message(\"DB_DeStrobe: missing knobs:\\n  \" + \"\\n  \".join(missing))\n        return\n\n\n    seq_first, seq_last, range_error = get_sequence_range(gizmo)\n    if range_error:\n        gizmo\[K_INFO].setValue(_format_info(\"-\", \"-\", range_error))\n        return\n\n\n    input_range_info = \"%d-%d\" % (seq_first, seq_last)\n\n\n    original_curve_data, smooth_range_info, warning_msg = \\\n        get_tracker_data(gizmo.input(1))\n\n\n    if original_curve_data is None:\n        gizmo\[K_INFO].setValue(_format_info(\n            input_range_info, \"-\", warning_msg))\n        return\n\n\n    strength = gizmo\[K_STRENGTH].value()\n    transition_ratio = gizmo\[K_TRANS].value()\n    temporal_weight = gizmo\[K_TEMPORAL].value()\n\n\n    smoothed_curve_data = smooth_curve(\n        original_curve_data, strength, transition_ratio)\n    raw_lookup = lookup_curve(\n        original_curve_data, smoothed_curve_data, temporal_weight)\n    lookup_data, extend_warning = extend_lookup(\n        raw_lookup, seq_first, seq_last)\n\n\n    warnings = \[warning_msg]\n    warnings.extend(check_retimers(gizmo))\n    warnings.append(extend_warning)\n    warning_msg = _join_warnings(warnings)\n\n\n    undo = nuke.Undo()\n    undo.begin(\"DB_DeStrobe Calculate\")\n    try:\n        write_results(gizmo, lookup_data, original_curve_data,\n                      smoothed_curve_data, seq_first, seq_last,\n                      input_range_info, smooth_range_info, warning_msg)\n    finally:\n        undo.end()\n\n\n\ncalculate()\n\n" +STARTLINE}
+    addUserKnob {26 space2 l "" +STARTLINE T " "}
+    addUserKnob {26 retime l <b>Retime</b>}
+    addUserKnob {4 retime_engine l Engine M {OFlow Kronos "" "" ""}}
+    addUserKnob {41 oflowVectorDetailLocal l "Vector Detail" T OFlow.vectorDetailLocal}
+    addUserKnob {41 kronosVectorDetailReg l "Vector Detail" +HIDDEN T Kronos.vectorDetailReg}
+    addUserKnob {41 oflowSmoothnessLocal l Smoothness T OFlow.smoothnessLocal}
+    addUserKnob {41 kronosStrengthReg l Strength +HIDDEN T Kronos.strengthReg}
+    addUserKnob {41 oflowResampleType l Filter T OFlow.resampleType}
+    addUserKnob {41 kronosResampleType l Filter +HIDDEN T Kronos.resampleType}
+    addUserKnob {26 space3 l "" +STARTLINE T " "}
+    addUserKnob {26 info l <b>Info</b>}
+    addUserKnob {26 info_text l " " T "<font size=3>Input Range: —</font><br>\n<font size=3>Smooth Range: —</font>"}
+    addUserKnob {26 space4 l "" +STARTLINE T " "}
+    addUserKnob {20 curves_tab l "View Curves" n 1}
+    curves_tab 0
+    addUserKnob {12 original_curve l "Original Curve" +DISABLED}
+    addUserKnob {12 smoothed_curve l "Smoothed Curve" +DISABLED}
+    addUserKnob {20 endGroup n -1}
+    addUserKnob {26 ""}
+    addUserKnob {26 credits l "" +STARTLINE T "<font size=2 color=#C86A4A><b>DB_DeStrobe 1.0 </b></font><font size=2>by Dmitry Baramov</a></font>"}
+    addUserKnob {26 space5 l "" +STARTLINE T " "}
+    addUserKnob {7 lookup_curve +INVISIBLE}
+    lookup_curve {{frame}}
+    addUserKnob {1 version +INVISIBLE}
+    version 1.0
 }
- Input {
-  inputs 0
-  name image
-  xpos -140
-  ypos -334
- }
- Dot {
-  name Dot1
-  xpos -106
-  ypos -281
- }
-set N70021c00 [stack 0]
- Kronos {
-  retimedChannels all
-  timing2 Frame
-  timingFrame2 {{parent.lookup_curve}}
-  motionEstimation Regularized
-  name Kronos
-  xpos -40
-  ypos -238
-  disable {{"Switch.which != 1"}}
- }
-push $N70021c00
- OFlow2 {
-  timing2 Frame
-  timingFrame2 {{parent.lookup_curve}}
-  name OFlow
-  xpos -240
-  ypos -234
-  disable {{"Switch.which != 0"}}
- }
- Switch {
-  inputs 2
-  which {{parent.retime_engine}}
-  name Switch
-  xpos -140
-  ypos -184
- }
- Output {
-  name Output1
-  xpos -140
-  ypos -134
- }
- Input {
-  inputs 0
-  name tracker
-  xpos 160
-  ypos -334
-  number 1
- }
- NoOp {
-  name NoOp
-  xpos 160
-  ypos -234
- }
+Input {
+    inputs 0
+    name image
+    xpos -140
+    ypos -334
+}
+Dot {
+    name Dot1
+    xpos -106
+    ypos -281
+}
+set N92ff0200 [stack 0]
+Kronos {
+    retimedChannels all
+    timing2 Frame
+    timingFrame2 {{parent.lookup_curve}}
+    motionEstimation Regularized
+    name Kronos
+    xpos -40
+    ypos -238
+    disable {{"Switch.which != 1"}}
+}
+push $N92ff0200
+OFlow2 {
+    timing2 Frame
+    timingFrame2 {{parent.lookup_curve}}
+    name OFlow
+    xpos -240
+    ypos -234
+    disable {{"Switch.which != 0"}}
+}
+Switch {
+    inputs 2
+    which {{parent.retime_engine}}
+    name Switch
+    xpos -140
+    ypos -184
+}
+Output {
+    name Output1
+    xpos -140
+    ypos -134
+}
+Input {
+    inputs 0
+    name tracker
+    xpos 160
+    ypos -334
+    number 1
+}
+NoOp {
+    name NoOp
+    xpos 160
+    ypos -234
+}
 end_group
