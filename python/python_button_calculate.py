@@ -128,7 +128,7 @@ def lookup_curve(original_curve_data, smoothed_curve_data):
     for i in range(len(smoothed_curve_data)):
         target_x, target_y, target_frame = smoothed_curve_data[i]
 
-        best_score = float('inf')
+        best_score = math.inf
         best_frame = prev_source_frame
         best_dist = 0.0
         best_idx = best_orig_index
