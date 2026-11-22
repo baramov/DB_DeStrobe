@@ -166,3 +166,47 @@ def lookup_curve(original_curve_data, smoothed_curve_data):
         best_orig_index = best_idx
 
     return lookup_data
+
+
+def write_results(gizmo, lookup_data, original_curve_data, smoothed_curve_data, smooth_range_info, warning_msg):
+
+    lookup_knob = gizmo['lookup_curve']
+    orig_knob = gizmo['original_curve']
+    smooth_knob = gizmo['smoothed_curve']
+
+    for knob in [lookup_knob, orig_knob, smooth_knob]:
+        knob.clearAnimated()
+        knob.setAnimated()
+
+    for out_frame, in_frame in lookup_data:
+        lookup_knob.setValueAt(in_frame, out_frame)
+
+    for x, y, frame in original_curve_data:
+        orig_knob.setValueAt(x, frame, 0)
+        orig_knob.setValueAt(y, frame, 1)
+
+    for x, y, frame in smoothed_curve_data:
+        smooth_knob.setValueAt(x, frame, 0)
+        smooth_knob.setValueAt(y, frame, 1)
+
+    try:
+        input_range = gizmo.input(0).upstreamFrameRange()
+        if input_range:
+            first = input_range.first()
+            last = input_range.last()
+
+            for node in gizmo.nodes():
+                if node.Class() in ['Kronos', 'OFlow2']:
+                    node['input.first'].setValue(first)
+                    node['input.last'].setValue(last)
+        else:
+            first, last = 1, 100  # Фоллбэк, если вход не подключен
+    except Exception:
+        first, last = 1, 100
+
+    info_html = (
+        f"<font size=3>Input Range: {first}-{last}</font><br>"
+        f"<font size=3>Smooth Range: {smooth_range_info}</font><br><br>"
+        f"<font size=3 color=yellow><b>WARNING: {warning_msg}</b></font>"
+    )
+    gizmo['info_text'].setValue(info_html)
