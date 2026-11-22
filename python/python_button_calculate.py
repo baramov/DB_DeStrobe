@@ -1,3 +1,4 @@
+import nuke
 import math
 
 
@@ -210,3 +211,33 @@ def write_results(gizmo, lookup_data, original_curve_data, smoothed_curve_data, 
         f"<font size=3 color=yellow><b>WARNING: {warning_msg}</b></font>"
     )
     gizmo['info_text'].setValue(info_html)
+
+
+def calculate():
+    gizmo = nuke.thisNode()
+
+    strength = int(gizmo['smooth_strength'].value())
+    transition = float(gizmo['transition'].value())
+    tracker_node = gizmo.input(1)
+
+    original_curve_data, smooth_range_info, warning_msg = get_tracker_data(
+        tracker_node)
+
+    if original_curve_data is None:
+        error_html = (
+            f"<font size=3>Input Range: -</font><br>"
+            f"<font size=3>Smooth Range: -</font><br><br>"
+            f"<font size=3 color=yellow><b>WARNING: {warning_msg}</b></font>"
+        )
+        gizmo['info_text'].setValue(error_html)
+        return
+
+    smoothed_curve_data = smooth_curve(
+        original_curve_data, strength, transition)
+    lookup_data = lookup_curve(original_curve_data, smoothed_curve_data)
+
+    write_results(gizmo, lookup_data, original_curve_data,
+                  smoothed_curve_data, smooth_range_info, warning_msg)
+
+
+calculate()
