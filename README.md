@@ -1,18 +1,18 @@
 # DB DeStrobe
 
-A gizmo for Foundry Nuke designed to smooth out jerky object or camera motion via optical flow retiming, driven by a smoothed tracking curve.
+A gizmo for Foundry Nuke designed to smooth out jerky object or camera motion via optical flow retime, driven by a tracking curve.
 
-
+<img width="2000" height="1414" alt="DB_DeStrobe_v1 0 0" src="https://github.com/user-attachments/assets/b87a5382-acdf-4ee6-9e2a-87398b1a056d" />
 
 ---
 
 ## Core Features
 
-* **Zero-Crop Motion Smoothing:** Eliminates stutters, jitter, and uneven movement via optical flow retiming instead of shifting the image—no cropping, scaling, or edge padding required.
-* **Partial or Full Length Smoothing:** Smoothly eases in and out at the start and end of your track, making it effortless to fix a specific problematic section without visible speed jumps.
-* **Handles Complex Motion:** Reliably smooths erratic, back-and-forth, or oscillating movements without unwanted frame freezes or backwards jumps.
-* **Flexible Retime Choice:** Switch between **OFlow** (standard Nuke) and **Kronos** (NukeX) in a single click.
-* **Curve Editor Inspection:** Compare original and smoothed curves directly in the Curve Editor for clear visual feedback.
+* **Zero-Crop Motion Smoothing:** <br>Eliminates stutters, jitter, and uneven movement via optical flow retiming instead of shifting the image—no cropping, scaling, or edge padding required.
+* **Partial or Full Length Smoothing:** <br>Smoothly eases in and out at the start and end of your track, making it effortless to fix a specific problematic section without visible speed jumps.
+* **Handles Complex Motion:** <br>Reliably smooths erratic, back-and-forth, or oscillating movements without unwanted frame freezes or backwards jumps.
+* **Flexible Retime Choice:** <br>Switch between **OFlow** (standard Nuke) and **Kronos** (NukeX) in a single click.
+* **Curve Editor Inspection:** <br>Compare original and smoothed curves directly in the Curve Editor for clear visual feedback.
 
 ---
 
@@ -35,7 +35,7 @@ dbtoolset.addCommand("DB_DeStrobe", "nuke.createNode('DB_DeStrobe')")
 ## Usage
 
 1. Connect your jerky plate to the **`image`** input.
-2. Track the jerky motion using a standard **Tracker** node (keyframed `translate`) and connect it to the **`tracker`** input.
+2. Track the jerky motion using a **Tracker** node (keyframed `translate`) and connect it to the **`tracker`** input.
 3. Adjust **Strength**, **Temporal Weight**, and **Transition Ratio** to fit the motion profile.
 4. Click **CALCULATE** to smooth the motion and apply the retime.
 5. Inspect `original_curve` / `smoothed_curve` in the Curve Editor to verify the smoothing.
