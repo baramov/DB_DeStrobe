@@ -1,6 +1,6 @@
 # DB DeStrobe
 
-A gizmo for Foundry Nuke designed to smooth out jerky object or camera motion via optical flow retime, driven by a tracking curve.
+A gizmo for Foundry Nuke designed to smooth out jerky object or camera motion via optical flow retiming, driven by a smoothed tracking curve.
 
 <img width="2000" height="1414" alt="DB_DeStrobe_v1 0 0" src="https://github.com/user-attachments/assets/b87a5382-acdf-4ee6-9e2a-87398b1a056d" />
 
@@ -18,7 +18,7 @@ A gizmo for Foundry Nuke designed to smooth out jerky object or camera motion vi
 
 ## Installation
 
-1. Download the latest version from the **[Releases page](https://github.com)**.
+1. Download the latest version from the **[Releases page](https://github.com/baramov/DB_DeStrobe/releases)**.
 2. Copy the `DB_DeStrobe.gizmo` file into your `.nuke` directory or any custom plugin path defined in `init.py`.
 3. Add the following command to your `menu.py` file:
 
